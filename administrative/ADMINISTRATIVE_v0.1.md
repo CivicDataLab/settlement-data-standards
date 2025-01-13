@@ -54,15 +54,6 @@ This standard defines the hierarchical structure of settlement administrative un
 ### 3.2 Administrative Unit Schema
 
 ```json
-Yes, there are two issues in the schema:
-
-1. The entire `adminUnit` block should be under a parent key `properties` since it's a GeoJSON Feature, but you have `geometry` as a sibling to `properties`
-
-2. Missing closing braces/brackets for nested structures
-
-Here's the corrected schema:
-
-```json
 {
   "type": "Feature",
   "id": "string(uuid)",
