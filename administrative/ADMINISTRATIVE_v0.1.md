@@ -1,5 +1,5 @@
 # Administrative Units Hierarchy Standard
-Version 0.1 | 13th January 2024 | DRAFT
+Version 0.1 | 13th January 2024
 Contributors: Prajna Prayas
 
 ## Table of Contents
@@ -8,7 +8,8 @@ Contributors: Prajna Prayas
 3. Administrative Hierarchy
 4. Implementation Notes
 5. Implementation Requirements
-6. Annexes
+6. Data Model
+7. Annexes
 
 ## 1. Introduction
 
@@ -43,11 +44,20 @@ This standard defines the hierarchical structure of settlement administrative un
 | 1 | State/Province | First-level division | Himachal Pradesh | ISO 3166-2 code |
 | 2 | District | Administrative district | Kangra | District code |
 | 3 | Sub-district | Subdivision of district | Dharamshala | Sub-district code |
-| 4 | Municipality/City | Urban local body | McLeodganj | Local body code |
-| 5 | Ward/Zone | Municipal division | Ward 54 | Ward number |
-| 6 | Block/Locality | Neighborhood unit | Yogiwara | Local identifier |
+| 4 | Parent Settlement | Primary Settlement | Dharamshala | Primary Settlement code |
+| 5 | Child Settlement | Child settlement if any | McLeodganj | Child Settlement code |
+| 6 | Locale | Granular location unit | Namgyal Monastery | Locale identifier |
 
 ### 3.2 Administrative Unit Schema
+
+```json
+Yes, there are two issues in the schema:
+
+1. The entire `adminUnit` block should be under a parent key `properties` since it's a GeoJSON Feature, but you have `geometry` as a sibling to `properties`
+
+2. Missing closing braces/brackets for nested structures
+
+Here's the corrected schema:
 
 ```json
 {
@@ -77,8 +87,8 @@ This standard defines the hierarchical structure of settlement administrative un
         "value": "number",
         "unit": "string"
       },
-      "administrativePath":{
-         "country": {
+      "administrativePath": {
+        "country": {
           "code": "string",
           "name": "string",
           "level": 0
@@ -114,11 +124,11 @@ This standard defines the hierarchical structure of settlement administrative un
           "level": 6
         }
       }
-    }
-  },
+    },
     "geometry": {
-    "type": "Polygon",
-     "coordinates": [[[number]]]
+      "type": "Polygon",
+      "coordinates": [[[number]]]
+    }
   }
 }
 ```
@@ -188,7 +198,127 @@ This standard defines the hierarchical structure of settlement administrative un
 - Historical preservation required
 - Version control implementation
 
-## 6. Annexes
+## 6. Data Model
+```json
+{
+  "type": "Feature",
+  "id": "string(uuid)",
+  "properties": {
+    "metadata": {
+      "identifier": {
+        "code": "string",
+        "namespace": "string",
+        "version": "string"
+      },
+      "dataSource": {
+        "organization": "string",
+        "collection": "string",
+        "collectionDate": "string(ISO-8601)",
+        "accuracy": "number(meters)",
+        "methodologyReference": "string(URI)"
+      },
+      "quality": {
+        "spatialResolution": "number(meters)",
+        "temporalValidity": {
+          "start": "string(ISO-8601)",
+          "end": "string(ISO-8601)"
+        },
+        "completeness": "number(percentage)",
+        "positionalAccuracy": "number(meters)"
+      }
+    },
+    "adminUnit": {
+      "level": "integer(0-6)",
+      "code": "string",
+      "name": {
+        "default": "string",
+        "local": "string",
+        "alternative": ["string"]
+      },
+      "validityPeriod": {
+        "start": "date",
+        "end": "date"
+      },
+      "parent": {
+        "code": "string",
+        "level": "integer"
+      },
+      "status": "enum(official, unofficial, disputed)",
+      "population": "integer",
+      "lastCensus": "date",
+      "area": {
+        "value": "number",
+        "unit": "string"
+      },
+      "administrativePath": {
+        "country": {
+          "code": "string",
+          "name": "string",
+          "level": 0
+        },
+        "stateOrProvince": {
+          "code": "string",
+          "name": "string",
+          "level": 1
+        },
+        "district": {
+          "code": "string",
+          "name": "string",
+          "level": 2
+        },
+        "subdistrictOrSubdivision": {
+          "code": "string",
+          "name": "string",
+          "level": 3
+        },
+        "parentSettlement": {
+          "code": "string",
+          "name": "string",
+          "level": 4
+        },
+        "childSettlement": {
+          "code": "string",
+          "name": "string",
+          "level": 5
+        },
+        "locale": {
+          "code": "string",
+          "name": "string",
+          "level": 6
+        }
+      }
+    }
+  },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[[number]]]
+  }
+}
+
+```
+### 6.1 Core Schema
+
+```json
+{
+  "type": "Feature",
+  "properties": {
+    "metadata": {
+      // Metadata attributes 
+    },
+    "adminUnit": {
+      // AdminUnit attributes 
+    },
+   
+  },
+  "geometry": {
+      // GeoJSON
+  }
+}
+
+```
+
+
+## 7. Annexes
 
 ### Annex A: Administrative Code Lists
 # Indian Level 1 Administrative Divisions - Code List Standard
