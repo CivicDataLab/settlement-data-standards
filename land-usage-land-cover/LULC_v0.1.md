@@ -1,7 +1,7 @@
 # Land Use and Land Cover Data Standard
 Version:0.1
 
-Last Modified: 13th January 2024
+Last Modified: 13th January 2025
 
 Contributors: Prajna Prayas
 
